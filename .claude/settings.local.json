@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx --yes create-next-app@latest . --typescript --tailwind --eslint --app --src-dir=false --import-alias \"@/*\" --use-npm --turbopack --yes)",
+      "Read(//Users/sirsrsjmm/Development/untitled-folder/pak sulaiman/**)",
+      "Bash(mv nifas-care/.agents /tmp/nifas-care-agents-backup)",
+      "Bash(npx --yes create-next-app@latest nifas-care --typescript --tailwind --eslint --app --src-dir=false --import-alias \"@/*\" --use-npm --turbopack --yes)"
+    ]
+  }
+}
