@@ -3,7 +3,13 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { completeClinicalReviewAction, rejectClinicalReviewAction } from "../actions";
-import { InterventionType } from "@prisma/client";
+
+export type InterventionType =
+  | "COUNSELING"
+  | "EDUCATION"
+  | "REFERRAL"
+  | "HOME_VISIT"
+  | "PSYCHOTHERAPY";
 
 interface ClinicalDecisionFormProps {
   assessmentId: string;
@@ -31,11 +37,11 @@ export default function ClinicalDecisionForm({ assessmentId, reviewerPath }: Cli
 
   // Daftar Opsi Intervensi
   const interventionOptions = [
-    { type: InterventionType.COUNSELING, label: "Konseling (Counseling)" },
-    { type: InterventionType.EDUCATION, label: "Edukasi (Education)" },
-    { type: InterventionType.REFERRAL, label: "Rujukan Medis (Referral)" },
-    { type: InterventionType.HOME_VISIT, label: "Kunjungan Rumah (Home Visit)" },
-    { type: InterventionType.PSYCHOTHERAPY, label: "Psikoterapi (Psychotherapy)" },
+    { type: "COUNSELING" as const, label: "Konseling (Counseling)" },
+    { type: "EDUCATION" as const, label: "Edukasi (Education)" },
+    { type: "REFERRAL" as const, label: "Rujukan Medis (Referral)" },
+    { type: "HOME_VISIT" as const, label: "Kunjungan Rumah (Home Visit)" },
+    { type: "PSYCHOTHERAPY" as const, label: "Psikoterapi (Psychotherapy)" },
   ];
 
   const handleToggleIntervention = (type: InterventionType) => {
