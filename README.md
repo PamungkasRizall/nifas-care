@@ -20,6 +20,22 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Authentication Setup
+
+Login uses Google OAuth via Auth.js, backed by PostgreSQL through Prisma.
+
+1. Copy `.env.example` to `.env` (already present) and fill in:
+   - `DATABASE_URL` — a PostgreSQL connection string.
+   - `AUTH_SECRET` — generate with `npx auth secret`.
+   - `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` — from [Google Cloud Console](https://console.cloud.google.com/apis/credentials) (OAuth Client ID, type "Web application"). Add `http://localhost:3000/api/auth/callback/google` as an authorized redirect URI for local dev.
+2. Apply the database schema:
+   ```bash
+   npx prisma migrate dev --name init
+   ```
+3. Start the dev server and sign in at `/login`.
+
+New users are created automatically on first Google sign-in with the default role `MOTHER`. Other roles (`ADMIN`, `DOCTOR`, `MIDWIFE`, `NUTRITIONIST`, `RESEARCHER`) must currently be assigned directly in the database — an admin UI for role management is a future phase, per `.agents/Identity_Access_Management.md`.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

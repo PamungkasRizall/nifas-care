@@ -1,0 +1,13 @@
+<svg width="480" height="320" viewBox="0 0 480 320" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="sembelitNifasTitle">
+  <title id="sembelitNifasTitle">Ilustrasi Mengatasi Sembelit Setelah Melahirkan</title>
+  <rect width="480" height="320" fill="#FFF8F0"/>
+  <circle cx="80" cy="80" r="44" fill="#FFEAA5"/>
+  <circle cx="400" cy="240" r="50" fill="#F8C4B4"/>
+  <!-- Teacup / Bowl / Warm liquid element -->
+  <path d="M180 180h120v40c0 30-20 50-50 50s-50-20-50-50z" fill="#FFF"/>
+  <rect x="290" y="190" width="20" height="30" rx="10" stroke="#FFF" stroke-width="6"/>
+  <!-- Steams -->
+  <path d="M210 160c5-10-5-20 0-30" stroke="#E5BA73" stroke-width="4" stroke-linecap="round"/>
+  <path d="M240 155c5-10-5-20 0-30" stroke="#E5BA73" stroke-width="4" stroke-linecap="round"/>
+  <path d="M270 160c5-10-5-20 0-30" stroke="#E5BA73" stroke-width="4" stroke-linecap="round"/>
+</svg>

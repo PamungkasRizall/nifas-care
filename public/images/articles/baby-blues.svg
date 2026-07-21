@@ -1,0 +1,12 @@
+<svg width="480" height="320" viewBox="0 0 480 320" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="babyBluesTitle">
+  <title id="babyBluesTitle">Ilustrasi kesehatan mental ibu nifas</title>
+  <rect width="480" height="320" fill="#FDF4F5"/>
+  <circle cx="380" cy="60" r="60" fill="#F6DEE1"/>
+  <circle cx="60" cy="270" r="46" fill="#E1EAD9"/>
+  <path d="M140 230c0-55 45-100 100-100s100 45 100 100" stroke="#CF7B85" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="240" cy="150" r="62" fill="#FFFFFF"/>
+  <circle cx="220" cy="145" r="6" fill="#7A3B45"/>
+  <circle cx="260" cy="145" r="6" fill="#7A3B45"/>
+  <path d="M222 172c8 8 28 8 36 0" stroke="#7A3B45" stroke-width="5" stroke-linecap="round"/>
+  <path d="M120 260c40-18 200-18 240 0" stroke="#B15C67" stroke-width="12" stroke-linecap="round"/>
+</svg>

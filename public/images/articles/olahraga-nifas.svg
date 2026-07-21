@@ -1,0 +1,13 @@
+<svg width="480" height="320" viewBox="0 0 480 320" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="olahragaNifasTitle">
+  <title id="olahragaNifasTitle">Ilustrasi Olahraga Aman Setelah Melahirkan</title>
+  <rect width="480" height="320" fill="#E8F1F5"/>
+  <circle cx="80" cy="240" r="54" fill="#CFE2FE"/>
+  <circle cx="400" cy="80" r="46" fill="#D3E4CD"/>
+  <!-- Yoga Mat Representation -->
+  <rect x="140" y="210" width="200" height="16" rx="8" fill="#A5C9CA"/>
+  <!-- Sun/Energy element -->
+  <circle cx="240" cy="120" r="44" fill="#FFEBB4"/>
+  <!-- Abstract human movement curves -->
+  <path d="M210 160c20-30 40-30 60 0" stroke="#393E46" stroke-width="8" stroke-linecap="round"/>
+  <path d="M190 190c30-20 70-20 100 0" stroke="#393E46" stroke-width="8" stroke-linecap="round"/>
+</svg>

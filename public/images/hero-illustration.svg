@@ -1,0 +1,26 @@
+<svg width="640" height="560" viewBox="0 0 640 560" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="heroIllustrationTitle">
+  <title id="heroIllustrationTitle">Ilustrasi ibu menggendong bayi dengan tenang</title>
+  <circle cx="320" cy="290" r="230" fill="#F1F5EE"/>
+  <circle cx="480" cy="120" r="46" fill="#F6DEE1"/>
+  <circle cx="120" cy="440" r="34" fill="#FAE3C4"/>
+  <circle cx="140" cy="110" r="18" fill="#E1EAD9"/>
+  <path d="M320 470c-88 0-160-70-160-156 0-58 34-96 62-122 20-18 34-40 34-64h128c0 24 14 46 34 64 28 26 62 64 62 122 0 86-72 156-160 156Z" fill="#A8C293"/>
+  <path d="M320 470c-88 0-160-70-160-156 0-58 34-96 62-122 20-18 34-40 34-64h128c0 24 14 46 34 64 28 26 62 64 62 122 0 86-72 156-160 156Z" fill="url(#heroBodyGradient)" fill-opacity="0.35"/>
+  <ellipse cx="320" cy="240" rx="86" ry="90" fill="#FBF9F5"/>
+  <circle cx="288" cy="232" r="7" fill="#495F3E"/>
+  <circle cx="352" cy="232" r="7" fill="#495F3E"/>
+  <path d="M296 262c10 10 38 10 48 0" stroke="#495F3E" stroke-width="6" stroke-linecap="round"/>
+  <path d="M258 190c8-22 32-36 62-36s54 14 62 36" stroke="#5B7A52" stroke-width="10" stroke-linecap="round"/>
+  <ellipse cx="330" cy="360" rx="70" ry="64" fill="#F6DEE1"/>
+  <circle cx="330" cy="352" r="34" fill="#FDF4F5"/>
+  <circle cx="318" cy="348" r="4" fill="#7A3B45"/>
+  <circle cx="342" cy="348" r="4" fill="#7A3B45"/>
+  <path d="M320 362c6 6 16 6 22 0" stroke="#7A3B45" stroke-width="4" stroke-linecap="round"/>
+  <path d="M120 500c60-30 340-30 400 0" stroke="#E1EAD9" stroke-width="18" stroke-linecap="round"/>
+  <defs>
+    <linearGradient id="heroBodyGradient" x1="160" y1="128" x2="480" y2="470" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#5B7A52"/>
+      <stop offset="1" stop-color="#8AAB74"/>
+    </linearGradient>
+  </defs>
+</svg>

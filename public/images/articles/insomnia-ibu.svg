@@ -1,0 +1,14 @@
+<svg width="480" height="320" viewBox="0 0 480 320" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="insomniaIbuTitle">
+  <title id="insomniaIbuTitle">Ilustrasi Mengatasi Insomnia dan Rasa Cemas</title>
+  <rect width="480" height="320" fill="#1C1B29"/>
+  <!-- Glowing Moon -->
+  <circle cx="240" cy="160" r="70" fill="#FFEAA5" opacity="0.15"/>
+  <path d="M260 110c-30 0-55 25-55 55s25 55 55 55c10 0 20-3 28-8-25-3-43-25-43-50s18-47 43-50c-8-5-18-8-28-8z" fill="#FFFBEB"/>
+  <!-- Stars -->
+  <circle cx="100" cy="90" r="3" fill="#FFF"/>
+  <circle cx="380" cy="80" r="2" fill="#FFF"/>
+  <circle cx="140" cy="220" r="2" fill="#FFF"/>
+  <circle cx="340" cy="240" r="3" fill="#FFF"/>
+  <circle cx="210" cy="70" r="1.5" fill="#FFF"/>
+  <circle cx="290" cy="270" r="2" fill="#FFF"/>
+</svg>

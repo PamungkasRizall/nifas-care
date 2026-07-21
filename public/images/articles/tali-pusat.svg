@@ -1,0 +1,13 @@
+<svg width="480" height="320" viewBox="0 0 480 320" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="taliPusatTitle">
+  <title id="taliPusatTitle">Ilustrasi Perawatan Tali Pusat Bayi</title>
+  <rect width="480" height="320" fill="#E8F9FD"/>
+  <circle cx="400" cy="90" r="50" fill="#B9F3FC"/>
+  <!-- Baby Crib / Cloud shapes -->
+  <circle cx="180" cy="180" r="48" fill="#FFF"/>
+  <circle cx="230" cy="170" r="62" fill="#FFF"/>
+  <circle cx="280" cy="180" r="48" fill="#FFF"/>
+  <!-- Cute star -->
+  <path d="M230 90l8 15 17 2-12 12 3 17-16-9-16 9 3-17-12-12 17-2z" fill="#FFEBAD"/>
+  <!-- Safety pins or simple baby element -->
+  <circle cx="120" cy="240" r="28" fill="#A5F1E9"/>
+</svg>

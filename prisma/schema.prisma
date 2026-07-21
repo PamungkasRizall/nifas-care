@@ -1,0 +1,446 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                     String                   @id @default(cuid())
+  name                   String?
+  email                  String?                  @unique
+  emailVerified          DateTime?
+  image                  String?
+  password               String?
+  role                   Role                     @default(MOTHER)
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+  status                 UserStatus               @default(PENDING_ONBOARDING)
+  accounts               Account[]
+  motherProfile          MotherProfile?
+  sessions               Session[]
+  verificationsPerformed OnboardingVerification[]
+  assessments            Assessment[]             // Assessments yang dibuat (sebagai Mother)
+  reviewsGiven           AssessmentReview[]       // Reviews yang diberikan (sebagai Reviewer)
+  assignments            Assignment[]             // Tugas yang diberikan sistem (sebagai Mother)
+  dailyMoods             DailyMood[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model MotherProfile {
+  id                           String                   @id @default(cuid())
+  userId                       String                   @unique
+  fullName                     String?
+  phoneNumber                  String?
+  dateOfBirth                  DateTime?
+  education                    String?
+  occupation                   String?
+  address                      String?
+  deliveryDate                 DateTime?
+  deliveryMethod               String?
+  gravida                      Int?
+  parity                       Int?
+  abortus                      Int?
+  babyName                     String?
+  babyGender                   String?
+  birthWeight                  Float?
+  birthLength                  Float?
+  hypertension                 Boolean                  @default(false)
+  diabetes                     Boolean                  @default(false)
+  preEclampsia                 Boolean                  @default(false)
+  anxietyDisorder              Boolean                  @default(false)
+  depressionHistory            Boolean                  @default(false)
+  emergencyContactName         String?
+  emergencyContactRelationship String?
+  emergencyContactPhone        String?
+  privacyPolicyConsent         Boolean                  @default(false)
+  dataProcessingConsent        Boolean                  @default(false)
+  researchParticipationConsent Boolean                  @default(false)
+  midwifeNotes                 String?
+  createdAt                    DateTime                 @default(now())
+  updatedAt                    DateTime                 @updatedAt
+  user                         User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  verifications                OnboardingVerification[]
+}
+
+model OnboardingVerification {
+  id            String             @id @default(cuid())
+  motherProfile MotherProfile      @relation(fields: [motherUserId], references: [userId], onDelete: Cascade)
+  motherUserId  String
+  midwife       User               @relation(fields: [midwifeUserId], references: [id])
+  midwifeUserId String
+  status        VerificationStatus
+  note          String?
+  createdAt     DateTime           @default(now())
+}
+
+/// Satu record per sesi pengisian assessment oleh Mother.
+/// `answers` menyimpan jawaban mentah dalam format JSON —
+/// parsing & scoring dilakukan oleh sprint masing-masing (EPDS / Magnesium).
+model Assessment {
+  id           String             @id @default(cuid())
+  mother       User               @relation(fields: [motherId], references: [id], onDelete: Cascade)
+  motherId     String
+  assignment   Assignment?        @relation(fields: [assignmentId], references: [id])
+  assignmentId String?            // Optional: diisi saat Mother mengerjakan Assignment
+  type         AssessmentType
+  status       AssessmentStatus   @default(DRAFT)
+  answers      Json?
+  submittedAt  DateTime?
+  completedAt  DateTime?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  reviews      AssessmentReview[]
+}
+
+/// Satu record per tindakan review (Bidan, Dokter, atau Ahli Gizi).
+/// Satu Assessment dapat memiliki banyak AssessmentReview (riwayat lengkap).
+model AssessmentReview {
+  id           String                 @id @default(cuid())
+  assessment   Assessment             @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  assessmentId String
+  reviewer     User                   @relation(fields: [reviewerId], references: [id])
+  reviewerId   String
+  reviewerRole Role
+  status       ReviewStatus
+  note         String?
+  decision     String?                // Kesimpulan/Keputusan Klinis tingkat 2
+  followUpDate DateTime?              // Jadwal rencana tindak lanjut
+  followUpNote String?                // Instruksi/catatan rencana tindak lanjut
+  interventions ClinicalIntervention[] // Daftar intervensi yang diberikan
+  reviewedAt   DateTime               @default(now())
+  createdAt    DateTime               @default(now())
+}
+
+model ClinicalIntervention {
+  id                 String           @id @default(cuid())
+  assessmentReviewId String
+  review             AssessmentReview @relation(fields: [assessmentReviewId], references: [id], onDelete: Cascade)
+  type               InterventionType
+  notes              String?
+  createdAt          DateTime         @default(now())
+}
+
+model AssessmentTemplate {
+  id              String                     @id @default(cuid())
+  code            AssessmentType             @unique
+  name            String
+  description     String?
+  version         String                     @default("1.0")
+  isActive        Boolean                    @default(true)
+  schedules       AssessmentSchedule[]
+  questions       AssessmentQuestion[]
+  interpretations AssessmentInterpretation[]
+  redFlagRules    RedFlagRule[]
+  decisions       ClinicalDecisionRule[]
+  followUps       FollowUpRule[]
+  createdAt       DateTime                   @default(now())
+  updatedAt       DateTime                   @updatedAt
+}
+
+model AssessmentSchedule {
+  id           String             @id @default(cuid())
+  template     AssessmentTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  templateId   String
+  triggerType  ScheduleTriggerType
+  triggerValue Int                // Hari ke-x postpartum atau Minggu ke-x postpartum
+  sequence     Int                // Sekuens ke-x kuesioner ini dikerjakan
+  isActive     Boolean            @default(true)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+}
+
+model ReminderRule {
+  id        String            @id @default(cuid())
+  code      String            @unique // e.g. MOTHER_DUE_H1, MIDWIFE_PENDING
+  trigger   String            // ASSESSMENT_DUE, ASSESSMENT_OVERDUE, PENDING_REVIEW
+  offset    Int               // Offset hari (e.g. -1 untuk H-1, 0 untuk Hari H, 1 untuk H+1)
+  isActive  Boolean           @default(true)
+  histories ReminderHistory[]
+}
+
+model ReminderHistory {
+  id           String       @id @default(cuid())
+  rule         ReminderRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+  ruleId       String
+  recipientId  String       // ID Penerima (Mother, Midwife, dll.)
+  assessmentId String?      // Terikat dengan assessment ID tertentu jika ada
+  triggeredAt  DateTime     @default(now())
+}
+
+model Notification {
+  id            String                  @id @default(cuid())
+  event         String                  // e.g. MOTHER_ACTIVATED, ASSESSMENT_ASSIGNED
+  recipientId   String                  // ID User penerima
+  recipientRole Role                    // Role penerima (MOTHER, MIDWIFE, DOCTOR, etc.)
+  title         String
+  message       String
+  channel       NotificationChannelType
+  status        NotificationStatus      @default(UNREAD)
+  createdAt     DateTime                @default(now())
+  readAt        DateTime?
+}
+/// Tugas assessment yang dibuat oleh sistem untuk Mother.
+/// Assignment adalah wadah — Assessment adalah isinya (jawaban & review).
+model Assignment {
+  id          String           @id @default(cuid())
+  mother      User             @relation(fields: [motherId], references: [id], onDelete: Cascade)
+  motherId    String
+  type        AssessmentType
+  title       String
+  scheduledAt DateTime
+  dueDate     DateTime
+  status      AssignmentStatus @default(PENDING)
+  assessments Assessment[]     // Bisa ada lebih dari satu jika Mother mengulang
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+// ─────────────────────────────────────────────
+// Enums
+// ─────────────────────────────────────────────
+
+enum Role {
+  ADMIN
+  DOCTOR
+  MIDWIFE
+  NUTRITIONIST
+  MOTHER
+  RESEARCHER
+}
+
+enum UserStatus {
+  PENDING_ONBOARDING
+  PENDING_MIDWIFE_REVIEW
+  ACTIVE
+  SUSPENDED
+}
+
+enum VerificationStatus {
+  APPROVED
+  RETURNED
+}
+
+enum AssessmentType {
+  EPDS
+  MAGNESIUM
+}
+
+enum AssessmentStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  REJECTED
+  COMPLETED
+}
+
+/// Status untuk tiap tindakan review individual
+enum ReviewStatus {
+  APPROVED
+  REJECTED
+}
+
+enum ScheduleTriggerType {
+  POSTPARTUM_DAY
+  POSTPARTUM_WEEK
+  CUSTOM
+}
+
+/// Status tugas Assignment yang diberikan sistem kepada Mother
+enum AssignmentStatus {
+  PENDING      // Belum dikerjakan
+  IN_PROGRESS  // Sedang dikerjakan (draft assessment sudah ada)
+  SUBMITTED    // Menunggu review
+  COMPLETED    // Selesai
+  OVERDUE      // Melewati due date tanpa selesai
+}
+
+enum InterventionType {
+  COUNSELING
+  EDUCATION
+  REFERRAL
+  HOME_VISIT
+  PSYCHOTHERAPY
+}
+
+enum NotificationChannelType {
+  IN_APP
+  EMAIL
+}
+
+enum NotificationStatus {
+  UNREAD
+  READ
+  ARCHIVED
+}
+
+model AssessmentQuestion {
+  id          String             @id @default(cuid())
+  templateId  String
+  template    AssessmentTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  code        String             // e.g. "epds_q1"
+  order       Int
+  title       String
+  required    Boolean            @default(true)
+  isActive    Boolean            @default(true)
+  options     AssessmentOption[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  @@unique([templateId, code])
+}
+
+model AssessmentOption {
+  id          String             @id @default(cuid())
+  questionId  String
+  question    AssessmentQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  label       String
+  score       Int
+  order       Int
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+}
+
+model AssessmentInterpretation {
+  id             String             @id @default(cuid())
+  templateId     String
+  template       AssessmentTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  minScore       Int
+  maxScore       Int
+  interpretation String
+  priority       String             // LOW, HIGH, URGENT
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+}
+
+model RedFlagRule {
+  id              String             @id @default(cuid())
+  templateId      String
+  template        AssessmentTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  questionCode    String             // e.g. "epds_q10"
+  triggerScore    Int                // Score threshold to trigger red flag
+  overridePriority String             // e.g. "URGENT"
+  note            String?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+}
+
+model ClinicalDecisionRule {
+  id            String             @id @default(cuid())
+  templateId    String
+  template      AssessmentTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  priority      String             // LOW, HIGH, URGENT
+  decision      String             // e.g. "Observasi", "Konseling Bidan → Review Dokter"
+  interventions String[]           // List of suggested intervention titles/codes or type array
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+}
+
+model FollowUpRule {
+  id          String             @id @default(cuid())
+  templateId  String
+  template    AssessmentTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  priority    String             // LOW, HIGH, URGENT
+  days        Int                // e.g. 14, 7, 1
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+}
+
+model FoodCategory {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  foods     Food[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Food {
+  id          String        @id @default(cuid())
+  categoryId  String
+  category    FoodCategory  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  name        String        @unique
+  description String?
+  isActive    Boolean       @default(true)
+  servings    FoodServing[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model FoodServing {
+  id        String   @id @default(cuid())
+  foodId    String
+  food      Food     @relation(fields: [foodId], references: [id], onDelete: Cascade)
+  name      String   // e.g., "1 Mangkok (180 g)", "30 g"
+  weight    Float    // in grams
+  magnesium Float    // in mg
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MagnesiumTarget {
+  id        String   @id @default(cuid())
+  target    Float    @default(320)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MagnesiumInterpretationRule {
+  id             String   @id @default(cuid())
+  minPercent     Float
+  maxPercent     Float
+  status         String   // e.g., "Kurang", "Cukup"
+  interpretation String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model DailyMood {
+  id        String   @id @default(cuid())
+  motherId  String
+  score     Int
+  emoji     String
+  label     String
+  note      String?
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  mother    User     @relation(fields: [motherId], references: [id], onDelete: Cascade)
+
+  @@unique([motherId, date])
+}
+

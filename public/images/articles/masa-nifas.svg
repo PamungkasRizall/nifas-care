@@ -1,0 +1,11 @@
+<svg width="480" height="320" viewBox="0 0 480 320" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="masaNifasArticleTitle">
+  <title id="masaNifasArticleTitle">Ilustrasi panduan masa nifas</title>
+  <rect width="480" height="320" fill="#F1F5EE"/>
+  <circle cx="400" cy="70" r="54" fill="#F6DEE1"/>
+  <circle cx="60" cy="250" r="44" fill="#FAE3C4"/>
+  <ellipse cx="240" cy="180" rx="120" ry="90" fill="#FFFFFF"/>
+  <path d="M180 170c0-33 27-60 60-60s60 27 60 60" stroke="#5B7A52" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="215" cy="185" r="6" fill="#374731"/>
+  <circle cx="265" cy="185" r="6" fill="#374731"/>
+  <path d="M215 210c10 10 30 10 40 0" stroke="#374731" stroke-width="5" stroke-linecap="round"/>
+</svg>

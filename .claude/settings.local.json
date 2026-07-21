@@ -4,7 +4,27 @@
       "Bash(npx --yes create-next-app@latest . --typescript --tailwind --eslint --app --src-dir=false --import-alias \"@/*\" --use-npm --turbopack --yes)",
       "Read(//Users/sirsrsjmm/Development/untitled-folder/pak sulaiman/**)",
       "Bash(mv nifas-care/.agents /tmp/nifas-care-agents-backup)",
-      "Bash(npx --yes create-next-app@latest nifas-care --typescript --tailwind --eslint --app --src-dir=false --import-alias \"@/*\" --use-npm --turbopack --yes)"
+      "Bash(npx --yes create-next-app@latest nifas-care --typescript --tailwind --eslint --app --src-dir=false --import-alias \"@/*\" --use-npm --turbopack --yes)",
+      "Bash(cd \"/Users/sirsrsjmm/Development/untitled-folder/pak sulaiman/nifas-care\" && mv /tmp/nifas-care-agents-backup .agents && ls -la)",
+      "Bash(npx --yes shadcn@latest init -y -b neutral)",
+      "Bash(npx --yes shadcn@latest init --help)",
+      "Bash(npx --yes shadcn@latest init -d)",
+      "Bash(npx --yes shadcn@latest add card accordion badge separator sheet navigation-menu -y)",
+      "Bash(npm install *)",
+      "Bash(xargs -I{} sh -c 'echo ==={}===; cat {}')",
+      "Bash(npx tsc *)",
+      "Bash(npm run *)",
+      "Bash(npx prisma *)",
+      "Bash(node -e \"require.resolve\\('dotenv'\\)\")",
+      "Bash(mkdir -p \"/Users/sirsrsjmm/Development/untitled-folder/pak sulaiman/nifas-care/src/app/api/auth/[...nextauth]\")",
+      "Bash(git mv *)",
+      "Bash(mv src/middleware.ts src/proxy.ts)",
+      "Bash(PGPASSWORD=postgresql336699 psql -h localhost -U postgres -lqt)",
+      "Bash(npx auth *)"
+    ],
+    "additionalDirectories": [
+      "/private/tmp/nifas-care-agents-backup",
+      "/Users/sirsrsjmm/Development/untitled-folder/pak sulaiman/nifas-care/src/app/api/auth"
     ]
   }
 }

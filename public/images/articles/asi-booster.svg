@@ -1,0 +1,12 @@
+<svg width="480" height="320" viewBox="0 0 480 320" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="asiBoosterTitle">
+  <title id="asiBoosterTitle">Ilustrasi Makanan Pelancar ASI</title>
+  <rect width="480" height="320" fill="#F3F9F1"/>
+  <circle cx="90" cy="240" r="50" fill="#D2E9D8"/>
+  <circle cx="390" cy="80" r="44" fill="#E4F1E8"/>
+  <!-- Droplet of milk / liquid -->
+  <path d="M240 100c0 0-40 40-40 65s18 45 40 45 40-20 40-45-40-65-40-65z" fill="#FFF"/>
+  <path d="M240 106c0 0-34 34-34 59s15 39 34 39 34-17 34-39-34-59-34-59z" fill="#EBF7FF" opacity="0.4"/>
+  <!-- Green plant leaves representing herbs -->
+  <path d="M190 200c0-20 20-30 40-10s0 40-40 10z" fill="#80B996"/>
+  <path d="M290 190c0-20-20-30-40-10s0 40 40 10z" fill="#A7D2B7"/>
+</svg>

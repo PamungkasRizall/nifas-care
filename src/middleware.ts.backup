@@ -1,0 +1,42 @@
+import NextAuth from "next-auth";
+import authConfig from "@/lib/auth/auth.config";
+import { NextResponse } from "next/server";
+
+const { auth } = NextAuth(authConfig);
+
+export default auth((req) => {
+  const { nextUrl } = req;
+  const isAuthenticated = !!req.auth;
+  const user = req.auth?.user;
+
+  if (isAuthenticated && user?.role === "MOTHER") {
+    const status = user.status;
+    const path = nextUrl.pathname;
+
+    if (status === "ACTIVE") {
+      // An active mother should not access the onboarding pages anymore.
+      if (path.startsWith("/onboarding")) {
+        return NextResponse.redirect(new URL("/dashboard", nextUrl));
+      }
+    } else if (status === "PENDING_ONBOARDING") {
+      // A pending mother must stay on the onboarding page
+      // Allow access to /onboarding and api auth routes
+      if (path !== "/onboarding" && !path.startsWith("/api/auth")) {
+        return NextResponse.redirect(new URL("/onboarding", nextUrl));
+      }
+    } else if (status === "PENDING_MIDWIFE_REVIEW") {
+      // A pending review mother must stay on the pending page
+      if (path !== "/onboarding/pending" && !path.startsWith("/api/auth")) {
+        return NextResponse.redirect(new URL("/onboarding/pending", nextUrl));
+      }
+    }
+  }
+
+  return NextResponse.next();
+});
+
+export const config = {
+  matcher: [
+    "/((?!api/auth|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
+  ],
+};
