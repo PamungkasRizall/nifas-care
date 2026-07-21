@@ -344,8 +344,8 @@ export default async function NutritionistDashboardPage() {
             value={card.value}
             description={card.description}
             icon={card.icon}
-            accentClass={card.accentClass}
-            iconBgClass={card.iconBgClass}
+            accentClass={card.accent}
+            iconBgClass={card.iconBg}
           />
         ))}
       </div>

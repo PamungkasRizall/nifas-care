@@ -11,7 +11,12 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-const sidebarLinks = [
+const sidebarLinks: {
+  label: string;
+  href: string;
+  icon: React.ReactNode;
+  placeholder?: boolean;
+}[] = [
   {
     label: "Dashboard",
     href: "/dashboard",

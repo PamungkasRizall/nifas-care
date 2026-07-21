@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth/auth";
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -301,8 +302,8 @@ export default async function MidwifeDashboardPage() {
             value={card.value}
             description={card.description}
             icon={card.icon}
-            accentClass={card.accentClass}
-            iconBgClass={card.iconBgClass}
+            accentClass={card.accent}
+            iconBgClass={card.iconBg}
           />
         ))}
       </div>
