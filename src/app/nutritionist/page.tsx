@@ -62,10 +62,10 @@ async function getNutritionistDashboardStats(nutritionistId: string) {
       if (score < magnesiumTarget * 0.5) {
         status = "Sangat Kurang";
         lowIntakeCount++;
-      } else if (score < magnesiumTarget) {
+      } else if (score < magnesiumTarget * 0.9) {
         status = "Kurang";
         lowIntakeCount++;
-      } else if (score >= magnesiumTarget * 1.5) {
+      } else if (score > magnesiumTarget * 1.2) {
         status = "Tinggi";
         normalIntakeCount++;
       } else {
@@ -155,9 +155,9 @@ async function getNutritionistDashboardStats(nutritionistId: string) {
     const score = await magnesiumManifest.calculateScore(answers);
     if (score < magnesiumTarget * 0.5) {
       sgKurangCount++;
-    } else if (score < magnesiumTarget) {
+    } else if (score < magnesiumTarget * 0.9) {
       kurangCount++;
-    } else if (score >= magnesiumTarget * 1.5) {
+    } else if (score > magnesiumTarget * 1.2) {
       tinggiCount++;
     } else {
       cukupCount++;
@@ -245,7 +245,7 @@ async function getNutritionistDashboardStats(nutritionistId: string) {
     magnesiumDistribution: [
       { label: "Sangat Kurang", value: sgKurangCount, color: "#b15c67" },
       { label: "Kurang", value: kurangCount, color: "#e8a85a" },
-      { label: "Cukup", value: "var(--primary)", color: "var(--primary)" },
+      { label: "Cukup", value: cukupCount, color: "var(--primary)" },
       { label: "Tinggi", value: tinggiCount, color: "#8aab74" },
     ],
     topFoodsTrend,

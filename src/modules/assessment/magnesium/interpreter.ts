@@ -34,7 +34,9 @@ export async function interpretMagnesiumScore(
       ? "Asupan magnesium harian Anda telah memenuhi target AKG. Pertahankan pola makan sehat Anda!"
       : "Asupan magnesium harian Anda kurang dari target AKG. Disarankan untuk meningkatkan konsumsi makanan tinggi magnesium.");
 
-  const riskStatus: "LOW" | "HIGH" | "URGENT" = status === "Cukup" ? "LOW" : "HIGH";
+  const riskStatus: "LOW" | "HIGH" | "URGENT" = 
+    status === "Sangat Kurang" ? "URGENT" : 
+    status === "Kurang" ? "HIGH" : "LOW";
 
   return {
     score,

@@ -17,11 +17,17 @@ async function getAssignments(motherId: string) {
   });
 }
 
-export default async function MotherAssessmentPage() {
+export default async function MotherAssessmentPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: string }>;
+}) {
   const session = await auth();
   if (!session?.user?.id) {
     redirect("/login");
   }
+
+  const { tab = "active" } = await searchParams;
 
   const assignments = await getAssignments(session.user.id);
 
@@ -50,28 +56,48 @@ export default async function MotherAssessmentPage() {
           </p>
         </div>
       ) : (
-        <div className="space-y-8">
-          {/* Section Tugas Aktif */}
-          {pending.length > 0 && (
-            <div className="space-y-4">
-              <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
-                <span>Tugas Aktif</span>
-                <span className="bg-amber-100 text-amber-800 text-xs px-2.5 py-0.5 rounded-full font-semibold">
-                  {pending.length}
-                </span>
-              </h2>
+        <div className="space-y-6">
+          {/* Tabs */}
+          <div className="border-b border-border flex gap-6 text-sm font-semibold">
+            <Link
+              href="/dashboard/assessment?tab=active"
+              className={`pb-3 border-b-2 transition-colors ${
+                tab === "active"
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Tugas Aktif ({pending.length})
+            </Link>
+            <Link
+              href="/dashboard/assessment?tab=completed"
+              className={`pb-3 border-b-2 transition-colors ${
+                tab === "completed"
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Riwayat Selesai ({completed.length})
+            </Link>
+          </div>
+
+          {/* Tab Content */}
+          {tab === "active" && (
+            pending.length > 0 ? (
               <div className="grid grid-cols-1 gap-4">
                 {pending.map((assignment) => (
                   <AssignmentCard key={assignment.id} assignment={assignment} />
                 ))}
               </div>
-            </div>
+            ) : (
+              <div className="bg-card border border-border rounded-2xl p-8 text-center text-muted-foreground text-sm">
+                Tidak ada tugas aktif saat ini.
+              </div>
+            )
           )}
 
-          {/* Section Tugas Selesai */}
-          {completed.length > 0 && (
-            <div className="space-y-4">
-              <h2 className="text-lg font-bold text-foreground">Riwayat Selesai</h2>
+          {tab === "completed" && (
+            completed.length > 0 ? (
               <div className="bg-card border border-border rounded-2xl divide-y divide-border overflow-hidden">
                 {completed.map((a) => {
                   const formattedCompletedDate = new Intl.DateTimeFormat("id-ID", {
@@ -102,7 +128,11 @@ export default async function MotherAssessmentPage() {
                   );
                 })}
               </div>
-            </div>
+            ) : (
+              <div className="bg-card border border-border rounded-2xl p-8 text-center text-muted-foreground text-sm">
+                Belum ada riwayat assessment yang selesai.
+              </div>
+            )
           )}
         </div>
       )}

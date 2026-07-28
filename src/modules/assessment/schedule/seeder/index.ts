@@ -238,7 +238,6 @@ export async function seedAssessmentSchedules(): Promise<void> {
     categoriesMap[name] = cat.id;
   }
 
-  // Foods and Servings
   const foodsData = [
     {
       name: "Bayam",
@@ -263,6 +262,13 @@ export async function seedAssessmentSchedules(): Promise<void> {
       ]
     },
     {
+      name: "Daun Singkong",
+      category: "Sayuran",
+      servings: [
+        { name: "1 Piring (100 g)", weight: 100, magnesium: 65 }
+      ]
+    },
+    {
       name: "Kedelai",
       category: "Kacang-kacangan",
       servings: [
@@ -279,6 +285,14 @@ export async function seedAssessmentSchedules(): Promise<void> {
       ]
     },
     {
+      name: "Kacang Tanah",
+      category: "Kacang-kacangan",
+      servings: [
+        { name: "50 g", weight: 50, magnesium: 84 },
+        { name: "100 g", weight: 100, magnesium: 168 }
+      ]
+    },
+    {
       name: "Biji Labu",
       category: "Biji-bijian",
       servings: [
@@ -290,6 +304,125 @@ export async function seedAssessmentSchedules(): Promise<void> {
       category: "Biji-bijian",
       servings: [
         { name: "1 Mangkok (234 g)", weight: 234, magnesium: 61 }
+      ]
+    },
+    {
+      name: "Pisang",
+      category: "Buah",
+      servings: [
+        { name: "1 Buah Sedang", weight: 118, magnesium: 32 },
+        { name: "100 g", weight: 100, magnesium: 27 }
+      ]
+    },
+    {
+      name: "Alpukat",
+      category: "Buah",
+      servings: [
+        { name: "1 Buah Sedang", weight: 200, magnesium: 58 },
+        { name: "100 g", weight: 100, magnesium: 29 }
+      ]
+    },
+    {
+      name: "Udang",
+      category: "Seafood",
+      servings: [
+        { name: "100 g rebus", weight: 100, magnesium: 39 }
+      ]
+    },
+    {
+      name: "Kerang",
+      category: "Seafood",
+      servings: [
+        { name: "100 g", weight: 100, magnesium: 34 }
+      ]
+    },
+    {
+      name: "Ikan Teri",
+      category: "Ikan",
+      servings: [
+        { name: "50 g kering", weight: 50, magnesium: 61 }
+      ]
+    },
+    {
+      name: "Ikan Tongkol",
+      category: "Ikan",
+      servings: [
+        { name: "1 Potong Sedang (50 g)", weight: 50, magnesium: 32 },
+        { name: "100 g", weight: 100, magnesium: 64 }
+      ]
+    },
+    {
+      name: "Daging Ayam",
+      category: "Daging",
+      servings: [
+        { name: "1 Potong Sedang (100 g)", weight: 100, magnesium: 23 }
+      ]
+    },
+    {
+      name: "Daging Sapi",
+      category: "Daging",
+      servings: [
+        { name: "1 Potong Sedang (100 g)", weight: 100, magnesium: 21 }
+      ]
+    },
+    {
+      name: "Telur Ayam",
+      category: "Telur",
+      servings: [
+        { name: "1 Butir (50 g)", weight: 50, magnesium: 6 },
+        { name: "100 g", weight: 100, magnesium: 12 }
+      ]
+    },
+    {
+      name: "Telur Bebek",
+      category: "Telur",
+      servings: [
+        { name: "1 Butir (70 g)", weight: 70, magnesium: 12 },
+        { name: "100 g", weight: 100, magnesium: 17 }
+      ]
+    },
+    {
+      name: "Susu Sapi",
+      category: "Susu dan Produk Olahan",
+      servings: [
+        { name: "1 Gelas (200 ml)", weight: 200, magnesium: 22 }
+      ]
+    },
+    {
+      name: "Keju",
+      category: "Susu dan Produk Olahan",
+      servings: [
+        { name: "1 Lembar (20 g)", weight: 20, magnesium: 6 },
+        { name: "50 g", weight: 50, magnesium: 14 }
+      ]
+    },
+    {
+      name: "Yoghurt",
+      category: "Susu dan Produk Olahan",
+      servings: [
+        { name: "1 Cup (150 g)", weight: 150, magnesium: 17 }
+      ]
+    },
+    {
+      name: "Susu Kedelai",
+      category: "Minuman",
+      servings: [
+        { name: "1 Gelas (200 ml)", weight: 200, magnesium: 30 }
+      ]
+    },
+    {
+      name: "Air Kelapa",
+      category: "Minuman",
+      servings: [
+        { name: "1 Gelas (250 ml)", weight: 250, magnesium: 60 }
+      ]
+    },
+    {
+      name: "Dark Chocolate (Cokelat Hitam)",
+      category: "Lainnya",
+      servings: [
+        { name: "30 g (1 bar kecil)", weight: 30, magnesium: 68 },
+        { name: "100 g", weight: 100, magnesium: 228 }
       ]
     }
   ];
@@ -333,32 +466,43 @@ export async function seedAssessmentSchedules(): Promise<void> {
   if (!existingTarget) {
     await prisma.magnesiumTarget.create({
       data: {
-        target: 320,
+        target: 360,
         isActive: true,
       }
+    });
+  } else {
+    await prisma.magnesiumTarget.update({
+      where: { id: existingTarget.id },
+      data: { target: 360 }
     });
   }
 
   // Interpretation Rules
+  await prisma.magnesiumInterpretationRule.deleteMany();
+
   const rules = [
-    { minPercent: 0, maxPercent: 99.9, status: "Kurang", interpretation: "Asupan magnesium harian Anda kurang dari target AKG. Disarankan untuk meningkatkan konsumsi makanan tinggi magnesium seperti bayam, kedelai, atau kacang almond." },
-    { minPercent: 100, maxPercent: 9999, status: "Cukup", interpretation: "Asupan magnesium harian Anda telah memenuhi target AKG. Pertahankan pola makan sehat Anda!" }
+    { 
+      minPercent: 0, maxPercent: 49.9, status: "Sangat Kurang", 
+      interpretation: "Kondisi: Asupan nutrisi magnesium sangat minim dan jauh di bawah kebutuhan pemulihan tubuh serta produksi ASI.\nTindakan: Memerlukan evaluasi menu makanan serta konseling gizi mendesak dari ahli gizi/tenaga kesehatan." 
+    },
+    { 
+      minPercent: 50, maxPercent: 89.9, status: "Kurang", 
+      interpretation: "Kondisi: Asupan magnesium belum mencukupi kebutuhan harian ibu nifas/menyusui.\nTindakan: Edukasi penambahan porsi atau variasi bahan makanan tinggi magnesium (seperti kacang-kacangan, biji-bijian, sayuran hijau, dan pisang)." 
+    },
+    { 
+      minPercent: 90, maxPercent: 120, status: "Cukup", 
+      interpretation: "Kondisi: Asupan nutrisi magnesium ideal dan telah memenuhi kebutuhan tubuh harian dengan baik.\nTindakan: Pertahankan pola makan seimbang." 
+    },
+    { 
+      minPercent: 120.1, maxPercent: 9999, status: "Tinggi", 
+      interpretation: "Kondisi: Asupan harian melebihi estimasi kebutuhan rata-rata.\nTindakan: Jika bersumber dari makanan alami, umumnya aman (tolerable upper intake level dari makanan alamiah tidak terbatas). Namun, pastikan tidak ada efek samping pencernaan (seperti diare) jika ibu mengonsumsi suplemen tambahan." 
+    }
   ];
 
   for (const r of rules) {
-    const existingRule = await prisma.magnesiumInterpretationRule.findFirst({
-      where: { status: r.status }
+    await prisma.magnesiumInterpretationRule.create({
+      data: r
     });
-    if (!existingRule) {
-      await prisma.magnesiumInterpretationRule.create({
-        data: r
-      });
-    } else {
-      await prisma.magnesiumInterpretationRule.update({
-        where: { id: existingRule.id },
-        data: r
-      });
-    }
   }
 
   console.log("seedAssessmentSchedules: Seed templates, schedules, EPDS & Magnesium master data sukses.");

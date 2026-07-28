@@ -97,7 +97,7 @@ export default function ReviewActionsForm({ assessmentId }: ReviewActionsFormPro
           type="button"
           onClick={handleRejectClick}
           disabled={isPending}
-          className="flex-1 bg-destructive/10 border border-destructive/20 text-destructive font-semibold py-2.5 rounded-xl hover:bg-destructive/20 active:scale-95 text-xs transition disabled:opacity-50"
+          className="hidden flex-1 bg-destructive/10 border border-destructive/20 text-destructive font-semibold py-2.5 rounded-xl hover:bg-destructive/20 active:scale-95 text-xs transition disabled:opacity-50"
         >
           Tolak (Reject)
         </button>
