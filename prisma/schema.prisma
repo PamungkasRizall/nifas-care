@@ -258,6 +258,7 @@ enum VerificationStatus {
 enum AssessmentType {
   EPDS
   MAGNESIUM
+  GAD7
 }
 
 enum AssessmentStatus {

@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { EPDS_QUESTIONS } from "@/modules/epds/questions";
+import { GAD7_QUESTIONS } from "@/modules/gad7/questions";
 
 /**
  * Seed data awal untuk Assessment Template dan Schedules.
@@ -19,7 +20,7 @@ export async function seedAssessmentSchedules(): Promise<void> {
     },
   });
 
-  // 2. Buat Schedules untuk EPDS jika belum ada
+  // // 2. Buat Schedules untuk EPDS jika belum ada
   const schedulesData = [
     { triggerType: "POSTPARTUM_DAY" as const, triggerValue: 14, sequence: 1 },
     { triggerType: "POSTPARTUM_DAY" as const, triggerValue: 28, sequence: 2 },
@@ -481,21 +482,21 @@ export async function seedAssessmentSchedules(): Promise<void> {
   await prisma.magnesiumInterpretationRule.deleteMany();
 
   const rules = [
-    { 
-      minPercent: 0, maxPercent: 49.9, status: "Sangat Kurang", 
-      interpretation: "Kondisi: Asupan nutrisi magnesium sangat minim dan jauh di bawah kebutuhan pemulihan tubuh serta produksi ASI.\nTindakan: Memerlukan evaluasi menu makanan serta konseling gizi mendesak dari ahli gizi/tenaga kesehatan." 
+    {
+      minPercent: 0, maxPercent: 49.9, status: "Sangat Kurang",
+      interpretation: "Kondisi: Asupan nutrisi magnesium sangat minim dan jauh di bawah kebutuhan pemulihan tubuh serta produksi ASI.\nTindakan: Memerlukan evaluasi menu makanan serta konseling gizi mendesak dari ahli gizi/tenaga kesehatan."
     },
-    { 
-      minPercent: 50, maxPercent: 89.9, status: "Kurang", 
-      interpretation: "Kondisi: Asupan magnesium belum mencukupi kebutuhan harian ibu nifas/menyusui.\nTindakan: Edukasi penambahan porsi atau variasi bahan makanan tinggi magnesium (seperti kacang-kacangan, biji-bijian, sayuran hijau, dan pisang)." 
+    {
+      minPercent: 50, maxPercent: 89.9, status: "Kurang",
+      interpretation: "Kondisi: Asupan magnesium belum mencukupi kebutuhan harian ibu nifas/menyusui.\nTindakan: Edukasi penambahan porsi atau variasi bahan makanan tinggi magnesium (seperti kacang-kacangan, biji-bijian, sayuran hijau, dan pisang)."
     },
-    { 
-      minPercent: 90, maxPercent: 120, status: "Cukup", 
-      interpretation: "Kondisi: Asupan nutrisi magnesium ideal dan telah memenuhi kebutuhan tubuh harian dengan baik.\nTindakan: Pertahankan pola makan seimbang." 
+    {
+      minPercent: 90, maxPercent: 120, status: "Cukup",
+      interpretation: "Kondisi: Asupan nutrisi magnesium ideal dan telah memenuhi kebutuhan tubuh harian dengan baik.\nTindakan: Pertahankan pola makan seimbang."
     },
-    { 
-      minPercent: 120.1, maxPercent: 9999, status: "Tinggi", 
-      interpretation: "Kondisi: Asupan harian melebihi estimasi kebutuhan rata-rata.\nTindakan: Jika bersumber dari makanan alami, umumnya aman (tolerable upper intake level dari makanan alamiah tidak terbatas). Namun, pastikan tidak ada efek samping pencernaan (seperti diare) jika ibu mengonsumsi suplemen tambahan." 
+    {
+      minPercent: 120.1, maxPercent: 9999, status: "Tinggi",
+      interpretation: "Kondisi: Asupan harian melebihi estimasi kebutuhan rata-rata.\nTindakan: Jika bersumber dari makanan alami, umumnya aman (tolerable upper intake level dari makanan alamiah tidak terbatas). Namun, pastikan tidak ada efek samping pencernaan (seperti diare) jika ibu mengonsumsi suplemen tambahan."
     }
   ];
 
@@ -505,5 +506,158 @@ export async function seedAssessmentSchedules(): Promise<void> {
     });
   }
 
-  console.log("seedAssessmentSchedules: Seed templates, schedules, EPDS & Magnesium master data sukses.");
+  // 11. Buat Template GAD-7 jika belum ada
+  const gad7Template = await prisma.assessmentTemplate.upsert({
+    where: { code: "GAD7" },
+    update: {},
+    create: {
+      code: "GAD7",
+      name: "Generalized Anxiety Disorder 7 (GAD-7)",
+      description: "Skrining tingkat kecemasan ibu postpartum (dalam 2 minggu terakhir).",
+      version: "1.0",
+      isActive: true,
+    },
+  });
+
+  // 12. Buat Schedules untuk GAD-7 jika belum ada
+  // Mengikuti jadwal EPDS atau 14, 28, 42 hari ? (disesuaikan, bisa disamakan dengan EPDS atau hanya 1x)
+  // Untuk saat ini kita set 14, 28, 42 hari seperti EPDS sebagai skrining rutin kecemasan
+  // const gad7SchedulesData = [
+  //   { triggerType: "POSTPARTUM_DAY" as const, triggerValue: 14, sequence: 1 },
+  //   { triggerType: "POSTPARTUM_DAY" as const, triggerValue: 28, sequence: 2 },
+  //   { triggerType: "POSTPARTUM_DAY" as const, triggerValue: 42, sequence: 3 },
+  // ];
+
+  // for (const s of gad7SchedulesData) {
+  //   const existing = await prisma.assessmentSchedule.findFirst({
+  //     where: {
+  //       templateId: gad7Template.id,
+  //       sequence: s.sequence,
+  //     },
+  //   });
+
+  //   if (!existing) {
+  //     await prisma.assessmentSchedule.create({
+  //       data: {
+  //         templateId: gad7Template.id,
+  //         triggerType: s.triggerType,
+  //         triggerValue: s.triggerValue,
+  //         sequence: s.sequence,
+  //         isActive: true,
+  //       },
+  //     });
+  //   }
+  // }
+
+  // 13. Seed GAD-7 Questions and Options
+  for (let i = 0; i < GAD7_QUESTIONS.length; i++) {
+    const qSrc = GAD7_QUESTIONS[i];
+    const question = await prisma.assessmentQuestion.upsert({
+      where: {
+        templateId_code: {
+          templateId: gad7Template.id,
+          code: qSrc.id,
+        },
+      },
+      update: {
+        title: qSrc.text,
+        order: i + 1,
+        required: true,
+        isActive: true,
+      },
+      create: {
+        templateId: gad7Template.id,
+        code: qSrc.id,
+        title: qSrc.text,
+        order: i + 1,
+        required: true,
+        isActive: true,
+      },
+    });
+
+    await prisma.assessmentOption.deleteMany({
+      where: { questionId: question.id },
+    });
+
+    for (let j = 0; j < qSrc.options.length; j++) {
+      const oSrc = qSrc.options[j];
+      await prisma.assessmentOption.create({
+        data: {
+          questionId: question.id,
+          label: oSrc.text,
+          score: oSrc.score,
+          order: j + 1,
+        },
+      });
+    }
+  }
+
+  // 14. Seed GAD-7 Interpretations
+  const gad7Interpretations = [
+    { minScore: 0, maxScore: 4, interpretation: "Minimal", priority: "LOW" },
+    { minScore: 5, maxScore: 9, interpretation: "Ringan", priority: "LOW" },
+    { minScore: 10, maxScore: 14, interpretation: "Sedang", priority: "HIGH" },
+    { minScore: 15, maxScore: 21, interpretation: "Berat", priority: "URGENT" },
+  ];
+
+  await prisma.assessmentInterpretation.deleteMany({
+    where: { templateId: gad7Template.id },
+  });
+
+  for (const interp of gad7Interpretations) {
+    await prisma.assessmentInterpretation.create({
+      data: {
+        templateId: gad7Template.id,
+        minScore: interp.minScore,
+        maxScore: interp.maxScore,
+        interpretation: interp.interpretation,
+        priority: interp.priority,
+      },
+    });
+  }
+
+  // 15. Seed GAD-7 Clinical Decision Rules
+  await prisma.clinicalDecisionRule.deleteMany({
+    where: { templateId: gad7Template.id },
+  });
+
+  const gad7DecisionRules = [
+    { priority: "LOW", decision: "Observasi", interventions: ["EDUCATION"] },
+    { priority: "HIGH", decision: "Konseling Bidan → Review Dokter", interventions: ["COUNSELING", "HOME_VISIT"] },
+    { priority: "URGENT", decision: "Review Dokter Segera", interventions: ["REFERRAL", "PSYCHOTHERAPY"] },
+  ];
+
+  for (const rule of gad7DecisionRules) {
+    await prisma.clinicalDecisionRule.create({
+      data: {
+        templateId: gad7Template.id,
+        priority: rule.priority,
+        decision: rule.decision,
+        interventions: rule.interventions,
+      },
+    });
+  }
+
+  // 16. Seed GAD-7 Follow Up Rules
+  await prisma.followUpRule.deleteMany({
+    where: { templateId: gad7Template.id },
+  });
+
+  const gad7FollowUpRules = [
+    { priority: "LOW", days: 14 },
+    { priority: "HIGH", days: 7 },
+    { priority: "URGENT", days: 1 },
+  ];
+
+  for (const rule of gad7FollowUpRules) {
+    await prisma.followUpRule.create({
+      data: {
+        templateId: gad7Template.id,
+        priority: rule.priority,
+        days: rule.days,
+      },
+    });
+  }
+
+  console.log("seedAssessmentSchedules: Seed templates, schedules, EPDS, Magnesium & GAD-7 master data sukses.");
 }

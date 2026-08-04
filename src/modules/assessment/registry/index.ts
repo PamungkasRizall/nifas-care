@@ -2,12 +2,14 @@ import type { AssessmentType } from "@prisma/client";
 import type { AssessmentManifest } from "../shared/contract";
 import { epdsManifest } from "@/modules/epds/manifest";
 import { magnesiumManifest } from "@/modules/assessment/magnesium/manifest";
+import { gad7Manifest } from "@/modules/gad7/manifest";
 
 import { prisma } from "@/lib/prisma";
 
 const registry: Record<AssessmentType, AssessmentManifest> = {
   EPDS: epdsManifest,
   MAGNESIUM: magnesiumManifest,
+  GAD7: gad7Manifest,
 };
 
 export function getAssessmentManifest(type: AssessmentType): AssessmentManifest {

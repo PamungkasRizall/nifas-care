@@ -6,7 +6,7 @@ interface AssignmentCardProps {
 }
 
 export default function AssignmentCard({ assignment }: AssignmentCardProps) {
-  const isEpds = assignment.type === "EPDS";
+  const isEpds = assignment.type === "EPDS" || assignment.type === "GAD7";
   const isOverdue =
     assignment.status === "OVERDUE" ||
     (assignment.status !== "COMPLETED" &&

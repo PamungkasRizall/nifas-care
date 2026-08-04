@@ -162,7 +162,7 @@ export async function getDashboardData(motherId: string): Promise<DashboardData>
   const magnesiumManifest = getAssessmentManifest("MAGNESIUM");
 
   // A. Latest EPDS score
-  const latestEpds = assessments.find((ass) => ass.type === "EPDS" && ass.status === "COMPLETED");
+  const latestEpds = assessments.find((ass) => ass.type === "EPDS");
   let latestEpdsScore = null;
   if (latestEpds && latestEpds.answers) {
     const answers: any = latestEpds.answers;
@@ -173,6 +173,26 @@ export async function getDashboardData(motherId: string): Promise<DashboardData>
       }
     });
     latestEpdsScore = await epdsManifest.calculateScore(parsed);
+  }
+
+  // A2. Latest GAD7 score
+  const gad7Manifest = getAssessmentManifest("GAD7");
+  const latestGad7 = assessments.find((ass) => ass.type === "GAD7");
+  let latestGad7Score = null;
+  let latestGad7Interpretation = null;
+  if (latestGad7 && latestGad7.answers) {
+    const answers: any = latestGad7.answers;
+    const parsed: any = {};
+    Object.keys(answers).forEach((k) => {
+      if (typeof answers[k] === "string" || typeof answers[k] === "number") {
+        parsed[k] = answers[k];
+      }
+    });
+    latestGad7Score = await gad7Manifest.calculateScore(parsed);
+    const interp = await gad7Manifest.interpretScore(latestGad7Score, parsed);
+    if (interp) {
+      latestGad7Interpretation = interp.interpretation;
+    }
   }
 
   // B. Today's Magnesium intake
@@ -337,6 +357,8 @@ export async function getDashboardData(motherId: string): Promise<DashboardData>
 
     // Analytics
     latestEpdsScore,
+    latestGad7Score,
+    latestGad7Interpretation,
     todayMagnesium,
     nextAssessmentSchedule,
     epdsTrend,

@@ -14,6 +14,8 @@ export interface DashboardData {
 
   // Analytics extensions
   latestEpdsScore: number | null;
+  latestGad7Score: number | null;
+  latestGad7Interpretation: string | null;
   todayMagnesium: number;
   nextAssessmentSchedule: string | null;
   epdsTrend: Array<{ label: string; value: number }>;

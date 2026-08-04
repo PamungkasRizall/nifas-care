@@ -24,6 +24,7 @@ async function getMidwifeDashboardStats(midwifeId: string) {
   // Load manifests
   const epdsManifest = getAssessmentManifest("EPDS");
   const magnesiumManifest = getAssessmentManifest("MAGNESIUM");
+  const gad7Manifest = getAssessmentManifest("GAD7");
 
   // Get active target
   let magnesiumTarget = 320;
@@ -94,6 +95,16 @@ async function getMidwifeDashboardStats(midwifeId: string) {
         } else {
           priority = "LOW";
           mgCukup++;
+        }
+      } else if (a.type === "GAD7") {
+        score = await gad7Manifest.calculateScore(answers);
+        const interp = await gad7Manifest.interpretScore(score, answers);
+        priority = interp.riskStatus;
+
+        if (priority === "URGENT") {
+          urgentPriorityCount++;
+        } else if (priority === "HIGH") {
+          highPriorityCount++;
         }
       }
 
@@ -291,6 +302,18 @@ export default async function MidwifeDashboardPage() {
             Berikut ringkasan analytics dan prioritas antrean peninjauan Ibu Nifas.
           </p>
         </div>
+        <div className="shrink-0">
+          <a
+            href="/api/export"
+            download
+            className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2.5 rounded-xl transition shadow-sm text-sm"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+            </svg>
+            Unduh Laporan (Excel)
+          </a>
+        </div>
       </div>
 
       {/* Summary Cards */}
@@ -370,6 +393,8 @@ export default async function MidwifeDashboardPage() {
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
                     row.type === "EPDS"
                       ? "bg-blush-50 border-blush-200 text-blush-700"
+                      : row.type === "GAD7"
+                      ? "bg-purple-50 border-purple-200 text-purple-700"
                       : "bg-amber-50 border-amber-200 text-amber-700"
                   }`}>
                     {row.type}

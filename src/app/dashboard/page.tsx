@@ -51,6 +51,18 @@ export default async function MotherDashboardPage() {
       )
     },
     {
+      title: "Skor GAD-7 Terakhir",
+      value: data.latestGad7Score !== null ? data.latestGad7Score : "—",
+      description: data.latestGad7Score !== null ? `Interpretasi: ${data.latestGad7Interpretation || "-"}` : "Belum ada data",
+      iconBgClass: "bg-purple-100",
+      accentClass: "bg-purple-50/50 border-purple-200 text-purple-800",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-purple-600">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z" />
+        </svg>
+      )
+    },
+    {
       title: "Magnesium Hari Ini",
       value: `${data.todayMagnesium} mg`,
       description: "Asupan dari log makanan harian",
@@ -118,7 +130,7 @@ export default async function MotherDashboardPage() {
       />
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         {summaryCards.map((card, idx) => (
           <SummaryCard
             key={idx}

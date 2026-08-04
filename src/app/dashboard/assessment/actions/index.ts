@@ -69,6 +69,40 @@ export async function submitAssessmentPlayerAction(
           status: "SUBMITTED",
         },
       });
+
+      // Logika Percabangan (Gated Option) EPDS-3A -> GAD-7
+      if (assignment.type === "EPDS") {
+        const { calculateEPDS3AScore } = await import("@/modules/epds/score");
+        const epds3aScore = await calculateEPDS3AScore(answers as Record<string, unknown>);
+
+        // Jika skor >= 5 (Indikasi Kecemasan), berikan tugas GAD-7 ke ibu nifas
+        if (epds3aScore >= 5) {
+          // Cek apakah tugas GAD-7 yang masih pending sudah ada agar tidak duplikat
+          const existingGad7 = await tx.assignment.findFirst({
+            where: {
+              motherId: user.id,
+              type: "GAD7",
+              status: "PENDING",
+            },
+          });
+
+          if (!existingGad7) {
+            await tx.assignment.create({
+              data: {
+                motherId: user.id,
+                type: "GAD7",
+                title: "Skrining Lanjutan Kecemasan (GAD-7)",
+                scheduledAt: new Date(),
+                // Diberikan waktu pengerjaan 3 hari
+                dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+                status: "PENDING",
+              },
+            });
+            // Opsi: Kirim notifikasi ke ibu tentang kuesioner tambahan
+            // (Akan ditangani di background jobs jika ada, atau biarkan mother mengecek dashboard)
+          }
+        }
+      }
     });
 
     // Kirim notifikasi respons ke Bidan
