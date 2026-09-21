@@ -33,10 +33,10 @@ export function Hero() {
             kesehatan fisik dan mental setelah persalinan.
           </p>
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Button size="lg" render={<Link href="/skrining" />} nativeButton={false} className="h-11 gap-2 px-6 text-base">
+            {/* <Button size="lg" render={<Link href="/skrining" />} nativeButton={false} className="h-11 gap-2 px-6 text-base">
               Mulai Skrining
               <ArrowRight className="size-4" aria-hidden="true" />
-            </Button>
+            </Button> */}
             <Button
               size="lg"
               variant="outline"

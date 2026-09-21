@@ -86,9 +86,9 @@ export function Navbar({ isLoggedIn, dashboardHref }: NavbarProps) {
           >
             {isLoggedIn ? "Dashboard" : "Login"}
           </Button>
-          <Button render={<Link href="/skrining" />} nativeButton={false}>
+          {/* <Button render={<Link href="/skrining" />} nativeButton={false}>
             Mulai Skrining
-          </Button>
+          </Button> */}
         </div>
 
         <Sheet open={open} onOpenChange={setOpen}>
@@ -146,7 +146,7 @@ export function Navbar({ isLoggedIn, dashboardHref }: NavbarProps) {
                 {isLoggedIn ? "Dashboard" : "Login"}
               </SheetClose>
               {isLoggedIn && <LogoutButton className="w-full" />}
-              <SheetClose
+              {/* <SheetClose
                 render={
                   <Button
                     render={<Link href="/skrining" />}
@@ -156,7 +156,7 @@ export function Navbar({ isLoggedIn, dashboardHref }: NavbarProps) {
                 }
               >
                 Mulai Skrining
-              </SheetClose>
+              </SheetClose> */}
             </div>
           </SheetContent>
         </Sheet>

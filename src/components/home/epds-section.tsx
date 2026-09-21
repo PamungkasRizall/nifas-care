@@ -40,10 +40,10 @@ export function EPDSSection() {
               {epdsInfo.kapan}
             </p>
           </div>
-          <Button render={<Link href="/skrining" />} nativeButton={false} className="w-fit gap-2">
+          {/* <Button render={<Link href="/skrining" />} nativeButton={false} className="w-fit gap-2">
             Mulai Skrining EPDS
             <ArrowRight className="size-4" aria-hidden="true" />
-          </Button>
+          </Button> */}
         </FadeIn>
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-3 lg:grid-cols-1">

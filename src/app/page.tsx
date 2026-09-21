@@ -21,12 +21,12 @@ export default function Home() {
       <ArtikelSection />
       <FAQSection />
       <TentangKamiSection />
-      <CTASection
+      {/* <CTASection
         headline="Mulai menjaga kesehatan Anda sejak masa nifas."
         description="Kenali kondisi fisik dan mental Anda lebih awal bersama Nifas Care."
         buttonLabel="Mulai Skrining"
         buttonHref="/skrining"
-      />
+      /> */}
     </>
   );
 }
