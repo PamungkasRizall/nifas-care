@@ -7,6 +7,7 @@ export interface ReviewAssessmentItem {
   id: string;
   type: string;
   typeTitle: string;
+  sequence?: number | null;
   status: string;
   submittedAt: string | null;
   completedAt: string | null;
@@ -138,7 +139,11 @@ export default function MidwifeReviewDataTable({
         const matchesBaby = m.babyName?.toLowerCase().includes(q);
         const matchesAddress = m.address?.toLowerCase().includes(q);
         const matchesType = [...m.pendingAssessments, ...m.completedAssessments].some(
-          (a) => a.type.toLowerCase().includes(q) || a.typeTitle.toLowerCase().includes(q)
+          (a) =>
+            a.type.toLowerCase().includes(q) ||
+            a.typeTitle.toLowerCase().includes(q) ||
+            (a.type === "EPDS" && a.sequence && `epds ${a.sequence}`.includes(q)) ||
+            (a.type === "EPDS" && a.sequence && `epds${a.sequence}`.includes(q.replace(/\s+/g, "")))
         );
 
         if (!matchesName && !matchesPhone && !matchesEmail && !matchesBaby && !matchesAddress && !matchesType) {
@@ -665,6 +670,11 @@ export default function MidwifeReviewDataTable({
                                               <span className="font-bold text-foreground text-sm">
                                                 {item.typeTitle}
                                               </span>
+                                              {item.type === "EPDS" && item.sequence && (
+                                                <span className="inline-flex items-center gap-1 bg-sky-100 dark:bg-sky-950/60 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-300 text-xs font-bold px-2 py-0.5 rounded-full shadow-2xs">
+                                                  EPDS {item.sequence}
+                                                </span>
+                                              )}
                                               <span className="inline-flex items-center gap-1 bg-amber-50 border border-amber-200 text-amber-700 text-xs font-semibold px-2 py-0.5 rounded-full">
                                                 Menunggu Review
                                               </span>
@@ -726,6 +736,11 @@ export default function MidwifeReviewDataTable({
                                                 <span className="font-semibold text-foreground text-sm">
                                                   {item.typeTitle}
                                                 </span>
+                                                {item.type === "EPDS" && item.sequence && (
+                                                  <span className="inline-flex items-center gap-1 bg-sky-100 dark:bg-sky-950/60 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-300 text-xs font-bold px-2 py-0.5 rounded-full shadow-2xs">
+                                                    EPDS {item.sequence}
+                                                  </span>
+                                                )}
 
                                                 {item.status === "UNDER_REVIEW" ? (
                                                   <span className="inline-flex items-center gap-1 bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-semibold px-2 py-0.5 rounded-full">
@@ -1091,8 +1106,15 @@ export default function MidwifeReviewDataTable({
                                   className="bg-card border border-amber-200 rounded-xl p-3 space-y-2"
                                 >
                                   <div className="flex justify-between items-start gap-2">
-                                    <span className="font-bold text-xs text-foreground">{item.typeTitle}</span>
-                                    <span className="bg-amber-100 text-amber-800 text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                                    <div className="flex items-center gap-1.5 flex-wrap">
+                                      <span className="font-bold text-xs text-foreground">{item.typeTitle}</span>
+                                      {item.type === "EPDS" && item.sequence && (
+                                        <span className="bg-sky-100 dark:bg-sky-950/60 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-300 text-[10px] font-bold px-1.5 py-0.2 rounded-full">
+                                          EPDS {item.sequence}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <span className="bg-amber-100 text-amber-800 text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0">
                                       Menunggu
                                     </span>
                                   </div>
@@ -1130,9 +1152,16 @@ export default function MidwifeReviewDataTable({
                                   className="bg-card border border-border rounded-xl p-3 space-y-2"
                                 >
                                   <div className="flex justify-between items-start gap-2">
-                                    <span className="font-semibold text-xs text-foreground">
-                                      {item.typeTitle}
-                                    </span>
+                                    <div className="flex items-center gap-1.5 flex-wrap">
+                                      <span className="font-semibold text-xs text-foreground">
+                                        {item.typeTitle}
+                                      </span>
+                                      {item.type === "EPDS" && item.sequence && (
+                                        <span className="bg-sky-100 dark:bg-sky-950/60 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-300 text-[10px] font-bold px-1.5 py-0.2 rounded-full">
+                                          EPDS {item.sequence}
+                                        </span>
+                                      )}
+                                    </div>
                                     <span
                                       className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
                                         item.status === "COMPLETED"

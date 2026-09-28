@@ -45,6 +45,11 @@ export default async function MidwifeReviewQueuePage() {
           },
         },
         include: {
+          assignment: {
+            select: {
+              title: true,
+            },
+          },
           reviews: {
             orderBy: { createdAt: "desc" },
             take: 1,
@@ -80,12 +85,34 @@ export default async function MidwifeReviewQueuePage() {
       daysPostpartum = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     }
 
+    // Urutan kronologis pengerjaan per type untuk penentuan sequence
+    const sortedAssessments = [...mother.assessments].sort(
+      (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    );
+    const chronologicalIndexMap = new Map<string, number>();
+    const countPerType: Record<string, number> = {};
+    sortedAssessments.forEach((a) => {
+      countPerType[a.type] = (countPerType[a.type] || 0) + 1;
+      chronologicalIndexMap.set(a.id, countPerType[a.type]);
+    });
+
     const allAssessments: ReviewAssessmentItem[] = mother.assessments.map((a) => {
       const latestRev = a.reviews[0] || null;
+
+      // Ambil sequence dari judul assignment jika ada, atau fallback ke indeks kronologis
+      let sequence: number | null = chronologicalIndexMap.get(a.id) || null;
+      if (a.assignment?.title) {
+        const match = a.assignment.title.match(/Skrining Ke-(\d+)/i);
+        if (match && match[1]) {
+          sequence = parseInt(match[1], 10);
+        }
+      }
+
       return {
         id: a.id,
         type: a.type,
         typeTitle: manifestMap.get(a.type) || a.type,
+        sequence,
         status: a.status,
         submittedAt: a.submittedAt ? a.submittedAt.toISOString() : null,
         completedAt: a.completedAt ? a.completedAt.toISOString() : null,
