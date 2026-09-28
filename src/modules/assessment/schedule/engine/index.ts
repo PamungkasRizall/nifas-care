@@ -1,12 +1,31 @@
 import { prisma } from "@/lib/prisma";
 import { NotificationCenter } from "@/modules/notification/services";
 
+// In-flight mutex untuk mencegah race-condition saat multiple request bersamaan
+const inFlightGenerations = new Map<string, Promise<void>>();
+
 /**
  * Menghasilkan Assignment Assessment terjadwal secara otomatis untuk Mother tertentu.
- * Dijalankan ketika status Mother berubah menjadi ACTIVE.
+ * Dijalankan ketika status Mother berubah menjadi ACTIVE atau saat membuka dashboard.
  * Fungsi ini idempotent (aman dijalankan berkali-kali tanpa memicu tugas duplikat).
  */
 export async function generateAssignmentsForMother(motherId: string): Promise<void> {
+  const ongoing = inFlightGenerations.get(motherId);
+  if (ongoing) {
+    return ongoing;
+  }
+
+  const execution = (async () => {
+    await doGenerateAssignments(motherId);
+  })().finally(() => {
+    inFlightGenerations.delete(motherId);
+  });
+
+  inFlightGenerations.set(motherId, execution);
+  return execution;
+}
+
+async function doGenerateAssignments(motherId: string): Promise<void> {
   const mother = await prisma.user.findUnique({
     where: { id: motherId },
     include: {

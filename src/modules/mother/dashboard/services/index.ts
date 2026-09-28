@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import type { DashboardData, ActivityTimelineItem, HealthNote } from "../types";
 import { getAssessmentManifest } from "@/modules/assessment/registry";
 import { getMotherMoodStats } from "@/modules/mood/queries";
+import { generateAssignmentsForMother } from "@/modules/assessment/schedule/engine";
 
 export async function getDashboardData(motherId: string): Promise<DashboardData> {
   const mother = await prisma.user.findUnique({
@@ -43,7 +44,14 @@ export async function getDashboardData(motherId: string): Promise<DashboardData>
   const firstName = profile.fullName ? profile.fullName.split(" ")[0] : mother.name || "Ibu";
   greeting = `${greeting}, Ibu ${firstName}`;
 
-  // 3. Ambil data Assignments
+  // 3. Sinkronisasi tugas terjadwal sesuai hari nifas berjalan
+  try {
+    await generateAssignmentsForMother(motherId);
+  } catch (err) {
+    console.error("Gagal sinkronisasi assignment kuesioner:", err);
+  }
+
+  // 4. Ambil data Assignments
   const assignments = await prisma.assignment.findMany({
     where: { motherId },
     orderBy: { dueDate: "asc" },

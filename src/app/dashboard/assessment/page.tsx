@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import AssignmentCard from "@/app/dashboard/components/AssignmentCard";
 import Link from "next/link";
+import { generateAssignmentsForMother } from "@/modules/assessment/schedule/engine";
 
 export const metadata: Metadata = {
   title: "Daftar Tugas Assessment — Nifas Care",
@@ -11,6 +12,12 @@ export const metadata: Metadata = {
 };
 
 async function getAssignments(motherId: string) {
+  try {
+    await generateAssignmentsForMother(motherId);
+  } catch (err) {
+    console.error("Gagal sinkronisasi assignment kuesioner:", err);
+  }
+
   return prisma.assignment.findMany({
     where: { motherId },
     orderBy: { dueDate: "asc" },
