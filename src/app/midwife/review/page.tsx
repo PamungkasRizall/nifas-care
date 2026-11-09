@@ -3,6 +3,10 @@ import { auth } from "@/lib/auth/auth";
 import { getAllManifests } from "@/modules/assessment/registry";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import {
+  getScoringReferenceData,
+  computeMotherScoreSummary,
+} from "@/modules/midwife/services/scoringAggregator";
 import MidwifeReviewDataTable, {
   type MotherReviewGroup,
   type ReviewAssessmentItem,
@@ -31,13 +35,20 @@ export default async function MidwifeReviewQueuePage() {
     manifestMap.set(m.type, m.title);
   });
 
-  // Query SELURUH data Ibu terdaftar (role "MOTHER") beserta profil lengkap dan assessment-nya
+  // Pre-load data referensi penilaian untuk kalkulasi in-memory super cepat
+  const scoringRefs = await getScoringReferenceData();
+
+  // Query SELURUH data Ibu terdaftar (role "MOTHER") beserta profil lengkap, mood, dan assessment-nya
   const mothersFromDb = await prisma.user.findMany({
     where: {
       role: "MOTHER",
     },
     include: {
       motherProfile: true,
+      dailyMoods: {
+        orderBy: { date: "desc" },
+        take: 30,
+      },
       assessments: {
         where: {
           status: {
@@ -142,6 +153,9 @@ export default async function MidwifeReviewQueuePage() {
       : mother.updatedAt.toISOString();
     const latestType = latest ? latest.typeTitle.split(" (")[0] : "Belum ada skrining";
 
+    // Hitung ringkasan skor terpadu per ibu (EPDS 1-8, Mg 1-42, GAD-7, Mood)
+    const scoreSummary = computeMotherScoreSummary(mother, scoringRefs);
+
     return {
       motherId: mother.id,
       motherName,
@@ -193,6 +207,7 @@ export default async function MidwifeReviewQueuePage() {
       latestType,
       pendingAssessments,
       completedAssessments,
+      scoreSummary,
     };
   });
 

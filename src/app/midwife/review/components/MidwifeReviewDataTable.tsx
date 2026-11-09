@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import type { MotherScoreSummary } from "@/modules/midwife/services/scoringAggregator";
+import MotherScoreDetailsCard from "./MotherScoreDetailsCard";
 
 export interface ReviewAssessmentItem {
   id: string;
@@ -74,6 +76,9 @@ export interface MotherReviewGroup {
   latestType: string;
   pendingAssessments: ReviewAssessmentItem[];
   completedAssessments: ReviewAssessmentItem[];
+
+  // Rekap Skor Lengkap (EPDS 1-8, Mg 1-42, GAD-7, Mood)
+  scoreSummary?: MotherScoreSummary;
 }
 
 interface ManifestOption {
@@ -97,8 +102,8 @@ export default function MidwifeReviewDataTable({
   // State untuk melacak baris mana yang di-expand (default: semua tertutup)
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
-  // State untuk tab aktif di dalam baris expanded ("reviews" atau "profile")
-  const [activeTabPerMother, setActiveTabPerMother] = useState<Record<string, "reviews" | "profile">>({});
+  // State untuk tab aktif di dalam baris expanded ("reviews", "profile", atau "scores")
+  const [activeTabPerMother, setActiveTabPerMother] = useState<Record<string, "reviews" | "profile" | "scores">>({});
 
   const toggleExpand = (motherId: string) => {
     setExpandedIds((prev) => {
@@ -112,7 +117,7 @@ export default function MidwifeReviewDataTable({
     });
   };
 
-  const setMotherTab = (motherId: string, tab: "reviews" | "profile") => {
+  const setMotherTab = (motherId: string, tab: "reviews" | "profile" | "scores") => {
     setActiveTabPerMother((prev) => ({
       ...prev,
       [motherId]: tab,
@@ -630,6 +635,23 @@ export default function MidwifeReviewDataTable({
                                     <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" title="Ada catatan komorbid" />
                                   ) : null}
                                 </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => setMotherTab(mother.motherId, "scores")}
+                                  className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
+                                    currentTab === "scores"
+                                      ? "bg-teal-700 text-white shadow-sm dark:bg-teal-600"
+                                      : "bg-card border border-border text-muted-foreground hover:text-foreground"
+                                  }`}
+                                >
+                                  <span>📊 Detail HASIL SKOR Ibu nifas</span>
+                                  {mother.scoreSummary && (
+                                    <span className="bg-white/20 px-2 py-0.5 rounded-full text-[11px]">
+                                      {mother.scoreSummary.epdsList.length + mother.scoreSummary.magnesiumList.length}
+                                    </span>
+                                  )}
+                                </button>
                               </div>
 
                               <div className="text-xs text-muted-foreground">
@@ -994,6 +1016,15 @@ export default function MidwifeReviewDataTable({
                                 </div>
                               </div>
                             )}
+
+                            {/* TAB 3: DETAIL HASIL SKOR IBU NIFAS */}
+                            {currentTab === "scores" && (
+                              <MotherScoreDetailsCard
+                                motherName={mother.motherName}
+                                scoreSummary={mother.scoreSummary}
+                                formatDateShort={formatDateShort}
+                              />
+                            )}
                           </div>
                         )}
                       </td>
@@ -1082,6 +1113,17 @@ export default function MidwifeReviewDataTable({
                           }`}
                         >
                           Data Pasien
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setMotherTab(mother.motherId, "scores")}
+                          className={`flex-1 py-1.5 rounded-lg transition ${
+                            currentTab === "scores"
+                              ? "bg-teal-700 text-white shadow-sm dark:bg-teal-600 font-bold"
+                              : "text-muted-foreground hover:text-foreground"
+                          }`}
+                        >
+                          Detail Skor
                         </button>
                       </div>
 
@@ -1227,6 +1269,17 @@ export default function MidwifeReviewDataTable({
                               {mother.emergencyContactName ? `${mother.emergencyContactName} (${mother.emergencyContactRelationship}) - ${mother.emergencyContactPhone}` : "—"}
                             </p>
                           </div>
+                        </div>
+                      )}
+
+                      {/* Mobile TAB 3: DETAIL HASIL SKOR */}
+                      {currentTab === "scores" && (
+                        <div className="pt-1">
+                          <MotherScoreDetailsCard
+                            motherName={mother.motherName}
+                            scoreSummary={mother.scoreSummary}
+                            formatDateShort={formatDateShort}
+                          />
                         </div>
                       )}
                     </div>

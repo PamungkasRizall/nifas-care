@@ -18,6 +18,11 @@ const WORKFLOW_REGISTRY: Record<AssessmentType, WorkflowConfig> = {
     level1Reviewer: "MIDWIFE",
     level2Reviewer: "NUTRITIONIST",
   },
+  GAD7: {
+    type: "GAD7",
+    level1Reviewer: "MIDWIFE",
+    level2Reviewer: "DOCTOR",
+  },
 };
 
 /**
